@@ -8,6 +8,7 @@ public abstract class FishBaseScript : MonoBehaviour
     [SerializeField] float posX = 9f;
     //VFX
     [SerializeField] GameObject fishBlood;
+    public int pointsToGive = 5;
 
     public virtual void Move()
     {
@@ -24,4 +25,5 @@ public abstract class FishBaseScript : MonoBehaviour
     }
 
     //Givesomething To PLayer
+
 }

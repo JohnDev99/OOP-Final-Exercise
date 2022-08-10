@@ -6,7 +6,19 @@ using System.IO;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    public static GameManager instance { get; private set; }
+
+    //Nome do meu atual player
+    public string actualPlayer;
+    public int bestScore;
+    //Melhor jogador
+    public string bestPlayerName;
+
+
+    //Criaçao de uma propriedade para as duas variaveis
+    //Variavel do playerTag(InputField){get;private set;}
+    //Variavel dos meus pontos {get; custom setter;}
+
 
 
     private void Awake()
@@ -21,41 +33,42 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    // Start is called before the first frame update
-    void Start()
+
+
+    [System.Serializable]
+    class DataInfo
     {
-        
+        public string playerTag;
+        public int bestScore;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        //Teste
-        if (Input.GetKeyDown(KeyCode.A))
+
+        public void SaveData()
         {
-            SceneManager.LoadScene(0);
+            DataInfo info = new DataInfo();
+            info.playerTag = actualPlayer;
+            info.bestScore = bestScore;
+
+            //Cria 
+            string json = JsonUtility.ToJson(info);//Cria uma representaçao dos meus dados a ser Guardados
+                                                   //Escreve no ficheiro
+            File.WriteAllText(Application.persistentDataPath + "/dataInfo.json", json);//Cria ficheiro com todos os meus dados
         }
-    }
 
-    
+        public void LoadData()
+        {
+            string path = Application.persistentDataPath + "/dataInfo.json";//Caminho do meu diretorio
+            if (File.Exists(path))
+            {
+                string json = File.ReadAllText(path);//Ler primeiro
+                DataInfo myData = JsonUtility.FromJson<DataInfo>(json);//Converte
+                                                                       //Designa
+                actualPlayer = myData.playerTag;
+            }
+        }
+
 }
 
 
-[System.Serializable]
-class DataInfo
-{
-    string playerTag;
-    int bestScore;
 
-
-
-    public void SaveData()
-    {
-        DataInfo info = new DataInfo();
-        info.playerTag = playerTag;
-
-        //Incorreto
-        string json = JsonUtility.ToJson(Application.persistentDataPath + "/dataInfo.json");
-    }
-}
 

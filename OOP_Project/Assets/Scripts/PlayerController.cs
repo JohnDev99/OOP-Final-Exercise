@@ -18,6 +18,28 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] ParticleSystem bloodParticles;
 
+    //Proteger dados da variabel
+    [SerializeField] int myPoints;
+
+    /// <summary>
+    /// Propriedade que retorna os meus pontos do jogo
+    /// </summary>
+    public int playerPoints
+    {
+        get { return myPoints; }
+        set
+        {
+            if (myPoints <= 0)
+            {
+                myPoints = 0;
+            }
+            else
+            {
+                myPoints = value;
+            }
+        }
+    }
+
 
     //Criar mecanica de rotaçao do corpo que vai até -45º a 45º, e segue
     //o movimento do player
@@ -27,6 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         inWater = true;
+        myPoints = 0;
 
 
     }
@@ -44,6 +67,7 @@ public class PlayerController : MonoBehaviour
         Collider[] fish = Physics.OverlapSphere(mounthPos.position, radius, comsumeLayer);
         foreach (Collider myFish in fish)
         {
+            myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
             bloodParticles.Play();
             Destroy(myFish.gameObject);
 
