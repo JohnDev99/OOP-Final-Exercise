@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance { get; private set; }
 
     //Nome do meu atual player
-    public string actualPlayer;
+    public string actualPlayer = null;
     public int bestScore;
     //Melhor jogador
     public string bestPlayerName;
