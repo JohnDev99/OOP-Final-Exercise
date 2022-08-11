@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ocean
+  - gameOverPanel
+  - bestScoreTxt
   layers:
   - Default
   - TransparentFX

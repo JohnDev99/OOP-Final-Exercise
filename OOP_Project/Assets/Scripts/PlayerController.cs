@@ -21,10 +21,30 @@ public class PlayerController : MonoBehaviour
     //Proteger dados da variabel
     [SerializeField] int myPoints;
 
+    //Vida do Player
+    private float life;
+    public float Life { 
+        get { return life; }
+        set { 
+            if(life <= 0)
+            {
+                life = 0;
+            }
+            else
+            {
+                life = value;
+            }
+        
+        }
+    }
+
+    MainManager mainManager;
+
+
     /// <summary>
     /// Propriedade que retorna os meus pontos do jogo
     /// </summary>
-    public int playerPoints
+    public int PlayerPoints
     {
         get { return myPoints; }
         set
@@ -40,6 +60,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        mainManager = FindObjectOfType<MainManager>();
+    }
 
     //Criar mecanica de rotaçao do corpo que vai até -45º a 45º, e segue
     //o movimento do player
@@ -50,6 +74,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         inWater = true;
         myPoints = 0;
+        life = 100f;
 
 
     }
@@ -58,7 +83,12 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         PlayerBoundries();
-        CollideWithFish();
+        if (mainManager.IsGameRunning == true)
+        {
+            CollideWithFish();
+            DecreaseLife();
+        }
+
 
     }
 
@@ -67,11 +97,16 @@ public class PlayerController : MonoBehaviour
         Collider[] fish = Physics.OverlapSphere(mounthPos.position, radius, comsumeLayer);
         foreach (Collider myFish in fish)
         {
-            myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
-            bloodParticles.Play();
-            Destroy(myFish.gameObject);
+            EatFish(myFish);
 
         }
+    }
+
+    private void EatFish(Collider myFish)
+    {
+        myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
+        bloodParticles.Play();
+        Destroy(myFish.gameObject);
     }
 
     private void OnDrawGizmos()
@@ -92,9 +127,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
-
-        
+        if (mainManager.IsGameRunning)
+        {
+            Move();
+        }
 
 
     }
@@ -150,4 +186,10 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
         }*/
     }
+
+    void DecreaseLife()
+    {
+        life -= Time.deltaTime;
+    }
+    
 }

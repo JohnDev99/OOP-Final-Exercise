@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -13,10 +14,31 @@ public class UiHandler : MonoBehaviour
     [SerializeField] InputField playerInput;
     [SerializeField] Text warningInfo;
     bool hasName;
+    [SerializeField] TextMeshProUGUI bestScoreTxt;
 
+
+    private void Awake()
+    {
+        GameManager.instance.LoadData();
+    }
     private void Start()
     {
         hasName = false;
+        DisplayBestScore();
+
+    }
+
+    private void DisplayBestScore()
+    {
+        if (GameManager.instance.bestPlayerName != "")
+        {
+            bestScoreTxt.gameObject.SetActive(true);
+            bestScoreTxt.text = $"BEST SCORE: {GameManager.instance.bestPlayerName} {GameManager.instance.bestScore}pts";
+        }
+        else
+        {
+            bestScoreTxt.gameObject.SetActive(false);
+        }
     }
 
     public void SavePlayerTagBtn()

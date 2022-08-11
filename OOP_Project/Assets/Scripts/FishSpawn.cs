@@ -43,7 +43,7 @@ public class FishSpawn : MonoBehaviour
     Vector3 RandomPos(float minY, float maxY)
     {
          float y = Random.Range(minY, maxY);
-        return new Vector3(9f, y);
+        return new Vector3(9f, y, 87.2f);
     }
 
 
