@@ -17,6 +17,7 @@ public class MainManager : MonoBehaviour
     bool isGameRunning;
     public bool IsGameRunning { get { return isGameRunning; } }
 
+
     private void Awake()
     {
         GameManager.instance.LoadData();
@@ -55,6 +56,8 @@ public class MainManager : MonoBehaviour
     void GameOver()
     {
         isGameRunning = false;
+        player.gameObject.SetActive(false);
+        DeleteAll();
 
         //Ativar Painel
         gameOverPanel.SetActive(true);
@@ -84,5 +87,13 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    //Variavel do player float life
+    void DeleteAll()
+    {
+        GameObject[] fishsInScene = GameObject.FindGameObjectsWithTag("fish");
+        int fishNumber = fishsInScene.Length;
+        for(int i = 0; i < fishNumber; i++)
+        {
+            Destroy(fishsInScene[i]);
+        }
+    }
 }

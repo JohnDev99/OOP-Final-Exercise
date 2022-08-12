@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        
         rb = GetComponent<Rigidbody>();
         inWater = true;
         myPoints = 0;
@@ -104,9 +105,19 @@ public class PlayerController : MonoBehaviour
 
     private void EatFish(Collider myFish)
     {
-        myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
-        bloodParticles.Play();
-        Destroy(myFish.gameObject);
+        if(myFish.gameObject.tag == "fish")
+        {
+            myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
+            bloodParticles.Play();
+            Destroy(myFish.gameObject);
+        }
+        if(myFish.gameObject.tag == "salmon")
+        {
+            myPoints += myFish.gameObject.GetComponent<Salmon>().pointsToGive;
+            bloodParticles.Play();
+            Destroy(myFish.gameObject);
+        }
+
     }
 
     private void OnDrawGizmos()

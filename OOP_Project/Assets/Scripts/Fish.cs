@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Fish : FishBaseScript
 {
+    public float speed;
     // Start is called before the first frame update
     void Start()
     {
@@ -13,12 +14,15 @@ public class Fish : FishBaseScript
     // Update is called once per frame
     void Update()
     {
-        Move();
+        FishMove();
     }
 
-    public override void Move()
+
+    public override void FishMove()
     {
-        base.Move();
+
+        MoveLeft(speed);
+        DestroyOutOfScreen();
     }
 
 }

@@ -4,19 +4,13 @@ using UnityEngine;
 
 public abstract class FishBaseScript : MonoBehaviour
 {
-    [SerializeField] float speed;
-    [SerializeField] float posX = 9f;
-    //VFX
-    [SerializeField] GameObject fishBlood;
+    protected float posX = 9f;
     public int pointsToGive = 5;
 
-    public virtual void Move()
-    {
-        transform.Translate(Vector3.left * speed * Time.deltaTime);
-        DestroyOutOfScreen();
-    }
 
-    private void DestroyOutOfScreen()
+    public abstract void FishMove();
+
+    protected void DestroyOutOfScreen()
     {
         if (transform.position.x < -posX)
         {
@@ -25,5 +19,11 @@ public abstract class FishBaseScript : MonoBehaviour
     }
 
     //Givesomething To PLayer
+    protected void MoveLeft(float fishSpeed)
+    {
+        transform.Translate(Vector3.left * fishSpeed * Time.deltaTime);
+    }
+
+    
 
 }
