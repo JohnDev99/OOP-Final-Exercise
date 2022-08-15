@@ -9,6 +9,7 @@ public class MainManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI playerTagTxt;
     [SerializeField] TextMeshProUGUI pointsTxt;
+    [SerializeField] TextMeshProUGUI levelTxt;
     PlayerController player;
 
     [SerializeField]Image lifeBar;
@@ -17,10 +18,14 @@ public class MainManager : MonoBehaviour
     bool isGameRunning;
     public bool IsGameRunning { get { return isGameRunning; } }
 
+    public int level;
+    FishSpawn fishSpawn;
+
 
     private void Awake()
     {
         GameManager.instance.LoadData();
+        fishSpawn = FindObjectOfType<FishSpawn>();
         isGameRunning = true;
         player = FindObjectOfType<PlayerController>();
         gameOverPanel = GameObject.FindGameObjectWithTag("gameOverPanel");
@@ -31,6 +36,8 @@ public class MainManager : MonoBehaviour
     {
         playerTagTxt.text = GameManager.instance.actualPlayer;
         gameOverPanel.SetActive(false);
+        
+        level = 1;
 
     }
 
@@ -38,8 +45,14 @@ public class MainManager : MonoBehaviour
     void Update()
     {
         pointsTxt.text = $"Points: {player.PlayerPoints.ToString()}";
+        levelTxt.text = $"Level: {level}";
 
         LifeBar();
+        if (player.PlayerPoints >= level * 100)
+        {
+            level++;
+            fishSpawn.repeatRate++;
+        }
     }
 
     private void LifeBar()
@@ -55,18 +68,18 @@ public class MainManager : MonoBehaviour
     //Metodo de GameOver
     void GameOver()
     {
-        isGameRunning = false;
-        player.gameObject.SetActive(false);
-        DeleteAll();
 
-        //Ativar Painel
-        gameOverPanel.SetActive(true);
+        //Usar uma courtina
+        StartCoroutine(GameOverStat());
+
+
     }
 
     private void NewScore()
     {
         if(player.PlayerPoints > GameManager.instance.bestScore)
         {
+            
             GameManager.instance.bestPlayerName = playerTagTxt.text;
             GameManager.instance.bestScore = player.PlayerPoints;
             GameManager.instance.SaveData();
@@ -87,13 +100,29 @@ public class MainManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    void DeleteAll()
+    void DeleteAll(string fishType)
     {
-        GameObject[] fishsInScene = GameObject.FindGameObjectsWithTag("fish");
+        GameObject[] fishsInScene = GameObject.FindGameObjectsWithTag(fishType);
         int fishNumber = fishsInScene.Length;
         for(int i = 0; i < fishNumber; i++)
         {
             Destroy(fishsInScene[i]);
         }
     }
+
+    IEnumerator GameOverStat()
+    {
+        //player.playerAudioSource.PlayOneShot(player.soundEffects[0], player.soundsVolume);
+        isGameRunning = false;
+        player.GetComponent<Rigidbody>().useGravity = true;
+        yield return new WaitForSeconds(2f);
+        DeleteAll("fish");
+        DeleteAll("salmon");
+        //Ativar Painel
+        gameOverPanel.SetActive(true);
+
+
+
+    }
+
 }

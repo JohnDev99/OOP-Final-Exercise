@@ -11,6 +11,8 @@ public class Salmon : FishBaseScript
 
     Rigidbody rb;
 
+    public float lifeToPlayer = 5f;
+
 
     // Start is called before the first frame update
     void Start()

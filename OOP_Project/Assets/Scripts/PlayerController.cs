@@ -17,24 +17,34 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask comsumeLayer;
     // Start is called before the first frame update
     [SerializeField] ParticleSystem bloodParticles;
+    [SerializeField] ParticleSystem splashParticles;
+    public ParticleSystem deathVfx;
+
+    public AudioClip[] soundEffects;
+    public AudioSource playerAudioSource;
+    public float soundsVolume = 1f;
 
     //Proteger dados da variabel
     [SerializeField] int myPoints;
 
     //Vida do Player
     private float life;
-    public float Life { 
+    public float Life {
         get { return life; }
-        set { 
-            if(life <= 0)
+        set {
+            if (life <= 0)
             {
                 life = 0;
+            }
+            else if (life > 100f)
+            {
+                life = 100f;
             }
             else
             {
                 life = value;
             }
-        
+
         }
     }
 
@@ -71,8 +81,9 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        
+
         rb = GetComponent<Rigidbody>();
+        playerAudioSource = GetComponent<AudioSource>();
         inWater = true;
         myPoints = 0;
         life = 100f;
@@ -83,11 +94,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerBoundries();
         if (mainManager.IsGameRunning == true)
         {
             CollideWithFish();
             DecreaseLife();
+            PlayerBoundries();
         }
 
 
@@ -105,21 +116,26 @@ public class PlayerController : MonoBehaviour
 
     private void EatFish(Collider myFish)
     {
-        if(myFish.gameObject.tag == "fish")
+        if (myFish.gameObject.tag == "fish")
         {
             myPoints += myFish.gameObject.GetComponent<Fish>().pointsToGive;
-            bloodParticles.Play();
-            Destroy(myFish.gameObject);
+            FishEat(myFish);
         }
-        if(myFish.gameObject.tag == "salmon")
+        if (myFish.gameObject.tag == "salmon")
         {
-            myPoints += myFish.gameObject.GetComponent<Salmon>().pointsToGive;
-            bloodParticles.Play();
-            Destroy(myFish.gameObject);
+            FishEat(myFish);
+            life += myFish.GetComponent<Salmon>().lifeToPlayer;
         }
 
+        //Play sound
+        playerAudioSource.PlayOneShot(soundEffects[2], soundsVolume);
     }
 
+    private void FishEat(Collider myFish)
+    {
+        bloodParticles.Play();
+        Destroy(myFish.gameObject);
+    }
     private void OnDrawGizmos()
     {
         //Se a minha variavel nao tiver nenhum valor armazenado, nao desenhar o Gizmos
@@ -145,14 +161,6 @@ public class PlayerController : MonoBehaviour
 
 
     }
-
-    //Metodo opcional
-    /*private void Rotate()
-    {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        transform.Rotate(Vector3.forward, horizontalInput * angle);
-    }*/
-
     private void Move()
     {
         float verticalInput = Input.GetAxis("Vertical");
@@ -169,6 +177,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Ocean"))
         {
             Jump();
+            splashParticles.Play();
         }
 
         
@@ -181,6 +190,8 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         rb.useGravity = true;
         inWater = false;
+        //Play waterSound
+        playerAudioSource.PlayOneShot(soundEffects[1], soundsVolume);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -190,12 +201,10 @@ public class PlayerController : MonoBehaviour
             rb.useGravity = false;
             inWater = true;
             rb.velocity = Vector3.zero;
+            splashParticles.Stop();
+            playerAudioSource.PlayOneShot(soundEffects[1], soundsVolume);
         }
 
-        /*if(other.gameObject.layer == 6)
-        {
-            Destroy(other.gameObject);
-        }*/
     }
 
     void DecreaseLife()

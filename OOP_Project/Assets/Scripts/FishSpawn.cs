@@ -10,6 +10,7 @@ public class FishSpawn : MonoBehaviour
     public float time = 1.5f, repeatRate = 2f;
 
     MainManager mainManager;
+    
     // Start is called before the first frame update
 
     private void Awake()

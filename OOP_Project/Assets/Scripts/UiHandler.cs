@@ -23,8 +23,10 @@ public class UiHandler : MonoBehaviour
     }
     private void Start()
     {
+
         hasName = false;
         DisplayBestScore();
+
 
     }
 
@@ -32,13 +34,18 @@ public class UiHandler : MonoBehaviour
     {
         if (GameManager.instance.bestPlayerName != "")
         {
-            bestScoreTxt.gameObject.SetActive(true);
-            bestScoreTxt.text = $"BEST SCORE: {GameManager.instance.bestPlayerName} {GameManager.instance.bestScore}pts";
+            ShowBestScore();
         }
         else
         {
             bestScoreTxt.gameObject.SetActive(false);
         }
+    }
+
+    private void ShowBestScore()
+    {
+        bestScoreTxt.gameObject.SetActive(true);
+        bestScoreTxt.text = $"BEST SCORE: {GameManager.instance.bestPlayerName} {GameManager.instance.bestScore}pts";
     }
 
     public void SavePlayerTagBtn()
